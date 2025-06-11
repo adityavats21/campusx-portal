@@ -1,0 +1,27 @@
+const multer = require('multer');
+const path = require('path');
+const express = require('express');
+const router = express.Router();
+const { uploadResource, getAllResources, deleteResource, updateResource } = require('../controllers/resourceController');
+
+// Local storage setup
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Folder to store PDFs
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Use 'upload.single' middleware here, NOT parser.single
+router.post('/', upload.single('file'), uploadResource);
+
+router.get('/', getAllResources);
+router.delete('/:id', deleteResource);
+router.put('/:id', updateResource);
+
+module.exports = router;
