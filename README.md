@@ -2,11 +2,11 @@
 
 > A full-stack MERN application to manage campus events, study resources, and AI-powered PDF summaries — built with ❤️ by **Aditya Vats**.
 
-![CampusX Banner](https://raw.githubusercontent.com/adityavats21/assets/main/campusx-banner.png) <!-- Replace with your own banner URL or remove if not hosted -->
+![CampusX Banner]https://github.com/adityavats21/campusx-portal.git 
 
 ---
 
-## 📌 Overview
+## Overview
 
 CampusX is a centralized portal for colleges to manage:
 - 🗓️ Upcoming events & RSVPs
@@ -18,7 +18,7 @@ Built from scratch using **MongoDB, Express.js, React, Node.js, JWT Auth, Cloudi
 
 ---
 
-## 🚀 Features
+## Features
 
 - 🔐 **Admin Login & JWT Authentication**
 - ☁️ **Secure PDF Uploads via Cloudinary**
@@ -31,7 +31,7 @@ Built from scratch using **MongoDB, Express.js, React, Node.js, JWT Auth, Cloudi
 
 ---
 
-## 🧠 Tech Stack
+## Tech Stack
 
 | Layer         | Technology                         |
 |---------------|-------------------------------------|
@@ -45,7 +45,7 @@ Built from scratch using **MongoDB, Express.js, React, Node.js, JWT Auth, Cloudi
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 CampusX-Student-Portal/
 │
@@ -69,7 +69,7 @@ Edit
 
 ---
 
-## 🔐 Admin Authentication
+## Admin Authentication
 
 - Admin logs in using a secure form.
 - Backend verifies credentials and returns a **JWT token**.
@@ -78,9 +78,9 @@ Edit
 
 ---
 
-## 🧪 How to Run Locally
+## How to Run Locally
 
-### 📥 Clone the repository
+### Clone the repository
 ```bash
 git clone https://github.com/adityavats21/campusx-portal.git
 cd campusx-portal
@@ -129,5 +129,5 @@ This project is licensed under the MIT License — feel free to use, modify, and
 🙋‍♂️ Author
 Made with dedication by Aditya Vats
 📧 vatsaditya21@gmail.com
-🔗 LinkedIn
-🔗 GitHub
+🔗 LinkedIn->
+🔗 GitHub->
