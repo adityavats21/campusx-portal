@@ -2,12 +2,12 @@ const { OpenAI } = require('openai');
 const pdfParse = require('pdf-parse');
 require('dotenv').config();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
-
 exports.summarizePdf = async (req, res) => {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({ message: 'AI summarization is not configured yet' });
+    }
+
     let text = req.body.text;
 
     if (req.file) {
@@ -22,6 +22,10 @@ exports.summarizePdf = async (req, res) => {
     if (!text) {
       return res.status(400).json({ message: 'No readable text found for summarization' });
     }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
 
     const completion = await openai.chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-4o-mini',

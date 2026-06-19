@@ -44,6 +44,7 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'ok',
     service: 'CampusX API',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     timestamp: new Date().toISOString()
   });
 });
@@ -62,41 +63,52 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
-// Connect to MongoDB and start server
-const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
-const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+const seedDefaultAdmin = async () => {
+  if (!process.env.DEFAULT_ADMIN_EMAIL || !process.env.DEFAULT_ADMIN_PASSWORD) return;
 
-if (missingEnv.length > 0) {
-  console.error(`${missingEnv.join(', ')} missing. Add required environment variables.`);
-  process.exit(1);
-}
+  const existingAdmin = await Admin.findOne({ email: process.env.DEFAULT_ADMIN_EMAIL });
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash(process.env.DEFAULT_ADMIN_PASSWORD, 10);
+    const newAdmin = new Admin({
+      email: process.env.DEFAULT_ADMIN_EMAIL,
+      password: hashedPassword
+    });
+    await newAdmin.save();
+    console.log('Default admin created from environment variables');
+  } else {
+    console.log('Default admin already exists');
+  }
+};
 
-mongoose.connect(process.env.MONGO_URI)
-.then(async () => {
-  console.log('MongoDB connected');
-
-  if (process.env.DEFAULT_ADMIN_EMAIL && process.env.DEFAULT_ADMIN_PASSWORD) {
-    const existingAdmin = await Admin.findOne({ email: process.env.DEFAULT_ADMIN_EMAIL });
-    if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash(process.env.DEFAULT_ADMIN_PASSWORD, 10);
-      const newAdmin = new Admin({
-        email: process.env.DEFAULT_ADMIN_EMAIL,
-        password: hashedPassword
-      });
-      await newAdmin.save();
-      console.log('Default admin created from environment variables');
-    } else {
-      console.log('Default admin already exists');
-    }
+const connectDatabase = async () => {
+  if (!process.env.MONGO_URI) {
+    console.warn('MONGO_URI is missing. App is running, but database-backed API routes will fail.');
+    return;
   }
 
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})
-.catch(err => console.error(err));
+  if (!process.env.JWT_SECRET) {
+    console.warn('JWT_SECRET is missing. Auth routes will fail until it is configured.');
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 10000 });
+    console.log('MongoDB connected');
+    await seedDefaultAdmin();
+  } catch (err) {
+    console.error('MongoDB connection failed:', err.message);
+  }
+};
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  connectDatabase();
+});
 
 process.on('SIGINT', async () => {
   console.log('Server shutting down gracefully');
-  await mongoose.connection.close(false);
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.connection.close(false);
+  }
   console.log('MongoDB connection closed');
   process.exit(0);
 });
