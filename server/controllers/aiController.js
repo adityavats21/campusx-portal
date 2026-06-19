@@ -1,6 +1,5 @@
-const fs = require('fs');
-const path = require('path');
 const { OpenAI } = require('openai');
+const pdfParse = require('pdf-parse');
 require('dotenv').config();
 
 const openai = new OpenAI({
@@ -9,22 +8,31 @@ const openai = new OpenAI({
 
 exports.summarizePdf = async (req, res) => {
   try {
-    const { text } = req.body;
+    let text = req.body.text;
+
+    if (req.file) {
+      if (req.file.mimetype !== 'application/pdf') {
+        return res.status(400).json({ message: 'Only PDF files can be summarized' });
+      }
+
+      const pdfData = await pdfParse(req.file.buffer);
+      text = pdfData.text;
+    }
 
     if (!text) {
-      return res.status(400).json({ message: 'No text provided for summarization' });
+      return res.status(400).json({ message: 'No readable text found for summarization' });
     }
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo', // or 'gpt-4'
+      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
-          content: 'You are an assistant that summarizes student resources in bullet points.'
+          content: 'You summarize student resources into crisp bullet points with key topics, formulas, and exam-relevant takeaways.'
         },
         {
           role: 'user',
-          content: `Summarize the following text:\n\n${text}`
+          content: `Summarize the following text:\n\n${text.slice(0, 12000)}`
         }
       ],
       temperature: 0.5

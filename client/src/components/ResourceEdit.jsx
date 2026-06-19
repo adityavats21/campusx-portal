@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Save, X } from 'lucide-react';
-
-const backendBaseURL = 'http://localhost:5006';
+import { apiUrl } from '../api';
 
 const ResourceEdit = ({ resourceId, token, onClose, onUpdated }) => {
   const [formData, setFormData] = useState({
@@ -21,7 +20,7 @@ const ResourceEdit = ({ resourceId, token, onClose, onUpdated }) => {
     const fetchResource = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${backendBaseURL}/api/resources/${resourceId}`);
+        const res = await axios.get(apiUrl(`/api/resources/${resourceId}`));
         setFormData({
           title: res.data.title || '',
           branch: res.data.branch || '',
@@ -52,7 +51,7 @@ const ResourceEdit = ({ resourceId, token, onClose, onUpdated }) => {
 
     try {
       const res = await axios.put(
-        `${backendBaseURL}/api/resources/${resourceId}`,
+        apiUrl(`/api/resources/${resourceId}`),
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },

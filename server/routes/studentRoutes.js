@@ -1,5 +1,4 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const Student = require('../models/student');
@@ -15,11 +14,10 @@ router.post('/register', async (req, res) => {
     const existingUser = await Student.findOne({ email });
     if (existingUser) return res.status(400).json({ msg: 'Email already registered' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new Student({
       name,
       email,
-      password: hashedPassword,
+      password,
       branch,
       semester
     });
@@ -41,7 +39,7 @@ router.post('/login', async (req, res) => {
     const student = await Student.findOne({ email });
     if (!student) return res.status(404).json({ msg: 'Student not found' });
 
-    const isMatch = await bcrypt.compare(password, student.password);
+    const isMatch = await student.matchPassword(password);
     if (!isMatch) return res.status(401).json({ msg: 'Invalid credentials' });
 
     const token = jwt.sign({ id: student._id }, JWT_SECRET, { expiresIn: '1h' });

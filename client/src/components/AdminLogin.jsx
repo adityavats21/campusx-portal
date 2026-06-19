@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../api';
 
 const AdminLogin = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ const AdminLogin = ({ onLogin }) => {
     try {
       console.log('Sending login request with:', formData);
   
-      const response = await fetch('http://localhost:5006/api/admin/login', {
+      const response = await fetch(apiUrl('/api/admin/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

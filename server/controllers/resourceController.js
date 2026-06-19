@@ -1,8 +1,6 @@
 const Resource = require('../models/Resource');
 const axios = require('axios');
 const pdfParse = require('pdf-parse');
-const cloudinary = require("cloudinary").v2;
-const fs = require('fs');
 // Upload a new study resource
 exports.uploadResource = async (req, res) => {
   try {
@@ -13,18 +11,9 @@ exports.uploadResource = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Upload to Cloudinary
-    const uploadedResponse = await cloudinary.uploader.upload(file.path, {
-      resource_type: "raw",
-      folder: "campusx-resources",
-      use_filename: true,
-      unique_filename: false,
-      type: "upload"
-    });
-
     let extractedText = '';
     if (file.mimetype === 'application/pdf') {
-      const response = await axios.get(uploadedResponse.secure_url, { responseType: 'arraybuffer' });
+      const response = await axios.get(file.path, { responseType: 'arraybuffer' });
       const pdfBuffer = Buffer.from(response.data);
       const pdfData = await pdfParse(pdfBuffer);
       extractedText = pdfData.text;
@@ -35,7 +24,7 @@ exports.uploadResource = async (req, res) => {
       branch,
       semester,
       uploadedBy,
-      fileLink: uploadedResponse.secure_url,
+      fileLink: file.path,
       extractedText,
     });
 
@@ -73,10 +62,28 @@ exports.deleteResource = async (req, res) => {
 // Get all resources
 exports.getAllResources = async (req, res) => {
   try {
-    const resources = await Resource.find().sort({ createdAt: -1 });
+    const filter = {};
+    if (req.query.branch) filter.branch = req.query.branch;
+    if (req.query.semester) filter.semester = req.query.semester;
+
+    const resources = await Resource.find(filter).sort({ createdAt: -1 });
     res.status(200).json(resources);
   } catch (err) {
     console.error("FETCH ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getResourceById = async (req, res) => {
+  try {
+    const resource = await Resource.findById(req.params.id);
+    if (!resource) {
+      return res.status(404).json({ message: 'Resource not found' });
+    }
+
+    res.status(200).json(resource);
+  } catch (err) {
+    console.error("FETCH BY ID ERROR:", err);
     res.status(500).json({ message: err.message });
   }
 };

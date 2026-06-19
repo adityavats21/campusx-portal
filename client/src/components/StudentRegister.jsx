@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiLock } from 'react-icons/fi';
+import { apiUrl } from '../api';
 
 const StudentRegister = () => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ const StudentRegister = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5006/api/students/register', formData);
+      await axios.post(apiUrl('/api/students/register'), formData);
       alert('Registration successful! Please login.');
       navigate('/student/login');
     } catch (err) {

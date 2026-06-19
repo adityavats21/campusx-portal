@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FileText, User, Clock, Edit, Trash2, Save, X } from 'lucide-react';
-
-const backendBaseURL = 'http://localhost:5006';
+import { API_BASE_URL, apiUrl } from '../api';
 
 const ResourceList = ({ token }) => {
   const [resources, setResources] = useState([]);
@@ -20,7 +19,7 @@ const ResourceList = ({ token }) => {
     const fetchResources = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${backendBaseURL}/api/resources`);
+        const res = await axios.get(apiUrl('/api/resources'));
         setResources(res.data);
         setLoading(false);
       } catch (err) {
@@ -35,7 +34,7 @@ const ResourceList = ({ token }) => {
     if (!window.confirm('Are you sure you want to delete this resource?')) return;
 
     try {
-      await axios.delete(`${backendBaseURL}/api/resources/${id}`, {
+      await axios.delete(apiUrl(`/api/resources/${id}`), {
         headers: { Authorization: `Bearer ${token}` },
       });
       setResources(resources.filter((r) => r._id !== id));
@@ -71,7 +70,7 @@ const ResourceList = ({ token }) => {
   const handleUpdate = async (id) => {
     try {
       const res = await axios.put(
-        `${backendBaseURL}/api/resources/${id}`,
+        apiUrl(`/api/resources/${id}`),
         editedResource,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -93,7 +92,7 @@ const ResourceList = ({ token }) => {
     if (!link) return '#';
     if (link.startsWith('http')) return link;
     const cleanLink = link.startsWith('/') ? link.substring(1) : link;
-    return `${backendBaseURL}/${cleanLink}`;
+    return `${API_BASE_URL}/${cleanLink}`;
   };
 
   if (loading) {

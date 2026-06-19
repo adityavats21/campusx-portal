@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { apiUrl } from '../api';
 
 const StudentEvents = () => {
   const [events, setEvents] = useState([]);
@@ -12,7 +13,7 @@ const StudentEvents = () => {
 
     const fetchEvents = async () => {
       try {
-        const res = await axios.get('http://localhost:5006/api/events/student/events', {
+        const res = await axios.get(apiUrl('/api/events/student/events'), {
           headers: { Authorization: `Bearer ${token}` },
         });
         setEvents(res.data);
@@ -43,10 +44,10 @@ const StudentEvents = () => {
         <ul className="space-y-4">
           {events.map(event => (
             <li key={event._id} className="p-4 border rounded shadow hover:shadow-md transition">
-              <h3 className="text-xl font-semibold text-indigo-600">{event.name}</h3>
+              <h3 className="text-xl font-semibold text-indigo-600">{event.title}</h3>
               <p className="text-gray-700">{event.description}</p>
               <p className="text-gray-500 text-sm">Date: {new Date(event.date).toLocaleDateString()}</p>
-              <p className="text-gray-500 text-sm">Venue: {event.venue}</p>
+              <p className="text-gray-500 text-sm">Venue: {event.location || 'Campus'}</p>
             </li>
           ))}
         </ul>

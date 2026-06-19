@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { apiUrl } from '../api';
 
 const EventEdit = () => {
   const { eventId } = useParams();
@@ -8,9 +9,10 @@ const EventEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const token = localStorage.getItem('adminToken');
 
   useEffect(() => {
-    axios.get(`http://localhost:5006/api/events/${eventId}`)
+    axios.get(apiUrl(`/api/events/${eventId}`))
       .then(res => {
         setEventData(res.data);
         setLoading(false);
@@ -26,7 +28,9 @@ const EventEdit = () => {
   };
 
   const handleUpdate = () => {
-    axios.put(`http://localhost:5006/api/events/${eventId}`, eventData)
+    axios.put(apiUrl(`/api/events/${eventId}`), eventData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then(() => navigate('/dashboard'))
       .catch(() => setError('Failed to update event'));
   };

@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix client",
+    "dev": "npm run dev --prefix server",
+    "render-build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "test": "npm test --prefix client -- --watchAll=false"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "CampusX is a MERN student resource and event portal with role-based auth, Cloudinary uploads, and AI PDF summaries.",
   "dependencies": {
     "cloudinary": "^1.41.3",
     "multer": "^2.0.1",

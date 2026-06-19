@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { apiUrl } from '../api';
 
 const EventAdminList = () => {
   const [events, setEvents] = useState([]);
@@ -8,6 +9,7 @@ const EventAdminList = () => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: '', description: '', date: '' });
   const [editId, setEditId] = useState(null);
+  const token = localStorage.getItem('adminToken');
 
   useEffect(() => {
     fetchEvents();
@@ -15,7 +17,7 @@ const EventAdminList = () => {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get('http://localhost:5006/api/events');
+      const res = await axios.get(apiUrl('/api/events'));
       setEvents(res.data);
       setLoading(false);
     } catch (err) {
@@ -27,7 +29,9 @@ const EventAdminList = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this event?')) return;
     try {
-      await axios.delete(`http://localhost:5006/api/events/${id}`);
+      await axios.delete(apiUrl(`/api/events/${id}`), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       fetchEvents();
     } catch (err) {
       alert('Delete failed.');
@@ -44,9 +48,13 @@ const EventAdminList = () => {
     e.preventDefault();
     try {
       if (editId) {
-        await axios.put(`http://localhost:5006/api/events/${editId}`, formData);
+        await axios.put(apiUrl(`/api/events/${editId}`), formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       } else {
-        await axios.post('http://localhost:5006/api/events', formData);
+        await axios.post(apiUrl('/api/events'), formData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
       }
       setFormData({ title: '', description: '', date: '' });
       setEditId(null);

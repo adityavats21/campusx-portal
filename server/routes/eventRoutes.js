@@ -12,17 +12,16 @@ const {
 } = require('../controllers/eventController');
 
 const authStudentMiddleware = require('../middleware/authStudentMiddleware');
+const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/', getAllEvents);
+router.get('/student/events', authStudentMiddleware, getEventsForStudents);
 router.get('/:id', getEventById);
-router.post('/', createEvent);
-router.put('/:id', updateEvent);
-router.delete('/:id', deleteEvent);
+router.post('/', authMiddleware, createEvent);
+router.put('/:id', authMiddleware, updateEvent);
+router.delete('/:id', authMiddleware, deleteEvent);
 
 // RSVP to event
 router.post('/:id/rsvp', rsvpEvent);
-
-// Protected route for students to get events
-router.get('/student/events', authStudentMiddleware, getEventsForStudents);
 
 module.exports = router;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import { apiUrl } from '../api';
 
 const StudentLogin = ({ onLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -40,7 +41,7 @@ const StudentLogin = ({ onLogin }) => {
     setLoading(true);
     setServerError('');
     try {
-      const res = await axios.post('http://localhost:5006/api/students/login', formData);
+      const res = await axios.post(apiUrl('/api/students/login'), formData);
       localStorage.setItem('studentToken', res.data.token);
       if (typeof onLogin === 'function') onLogin(res.data.token);
       navigate('/student/dashboard');

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-//import { Link } from 'react-router-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { apiUrl } from '../api';
 
 const StudentDashboard = () => {
   const [student, setStudent] = useState(null);
@@ -18,7 +18,7 @@ const StudentDashboard = () => {
     const fetchStudentData = async () => {
       try {
         // Fetch student profile
-        const profileRes = await axios.get('http://localhost:5006/api/students/profile', {
+        const profileRes = await axios.get(apiUrl('/api/students/profile'), {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -26,7 +26,7 @@ const StudentDashboard = () => {
         setStudent(studentData);
 
         // Fetch resources filtered by branch and semester
-        const resourcesRes = await axios.get('http://localhost:5006/api/resources', {
+        const resourcesRes = await axios.get(apiUrl('/api/resources'), {
           params: { branch: studentData.branch, semester: studentData.semester },
         });
 

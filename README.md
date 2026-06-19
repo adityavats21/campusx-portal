@@ -1,103 +1,90 @@
-# CampusX — Student Resource & Event Portal
+# CampusX Portal
 
-A full-stack MERN application for college event management, study resource sharing, and AI-powered PDF summarization — with JWT-secured admin panel and cloud file storage.
+CampusX is a full-stack MERN portal for college teams to manage study resources, campus events, student access, and AI-assisted PDF summaries from one dashboard.
 
----
+## Highlights
 
-## Features
-
-- **JWT Authentication** — secure admin login with token-based route protection
-- **Event Management** — full CRUD for campus events with student RSVP system
-- **Study Resource Library** — PDF/slide uploads via Cloudinary with browsable dashboard
-- **AI PDF Summarizer** — OpenAI API integration to auto-summarize uploaded documents
-- **Responsive UI** — React + TailwindCSS with polished component design
-
----
+- Role-based admin and student authentication with JWT
+- Admin dashboard for event and resource management
+- Student dashboard with branch/semester-aware resources
+- Cloudinary-backed PDF/document uploads
+- AI PDF summarization using the OpenAI API
+- MongoDB Atlas persistence with Mongoose models
+- Production-ready Express + React deployment on Render
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React.js, TailwindCSS |
-| Backend | Node.js, Express.js |
-| Database | MongoDB Atlas |
-| File Storage | Cloudinary |
-| AI Service | OpenAI API |
-| Auth | JWT (JSON Web Tokens) |
-| Deployment | Render (backend), Vercel (frontend), MongoDB Atlas |
+| Layer | Tools |
+| --- | --- |
+| Frontend | React, React Router, Tailwind CSS, Axios, Lucide/React Icons |
+| Backend | Node.js, Express, Mongoose, JWT, bcrypt |
+| Storage | Cloudinary |
+| AI | OpenAI API, pdf-parse |
+| Deployment | Render, MongoDB Atlas |
 
----
+## Project Structure
 
-## Architecture
-
+```text
+campusx-portal/
+  client/          React frontend
+  server/          Express API
+  render.yaml      Render web service blueprint
+  .env.example     Environment variable template
 ```
-client/                         # React frontend
-├── src/components/             # AdminLogin, Dashboard, EventCard, ResourceViewer
-server/                         # Express backend
-├── controllers/                # admin, event, resource logic
-├── routes/                     # API route definitions
-├── models/                     # Mongoose schemas
-└── middleware/                 # JWT auth middleware
-```
-
----
 
 ## Auth Flow
 
-1. Admin submits credentials via login form
-2. Backend verifies and returns a signed JWT
-3. Token stored in `localStorage` and attached to all subsequent request headers
-4. Protected routes (upload, delete, create) reject requests without valid token
-
----
+1. Admin or student submits credentials through the login form.
+2. Backend verifies credentials and returns a signed JWT.
+3. Token is stored in `localStorage`.
+4. Protected admin/student routes attach the token through the `Authorization` header.
 
 ## Local Setup
-
-### 1. Clone
 
 ```bash
 git clone https://github.com/adityavats21/campusx-portal.git
 cd campusx-portal
+npm run install:all
 ```
 
-### 2. Backend
+Create `server/.env` using `.env.example` as the template.
+
+Run the backend:
 
 ```bash
-cd server
-npm install
-```
-
-Create a `.env` file:
-
-```env
-PORT=5006
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_key
-CLOUDINARY_API_SECRET=your_secret
-OPENAI_API_KEY=your_openai_key
-```
-
-```bash
-npm start
-```
-
-### 3. Frontend
-
-```bash
-cd client
-npm install
 npm run dev
 ```
 
----
+Run the frontend in another terminal:
 
-## License
+```bash
+cd client
+REACT_APP_API_URL=http://localhost:5006 npm start
+```
 
-MIT
+## Render Deployment
 
----
+Use these settings if deploying manually from the Render dashboard:
+
+- Root directory: `campusx-portal` if your repository contains this folder, otherwise leave it blank
+- Build command: `npm run render-build`
+- Start command: `npm start`
+- Health check path: `/api/health`
+
+Required environment variables:
+
+```text
+MONGO_URI
+JWT_SECRET
+CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET
+OPENAI_API_KEY
+DEFAULT_ADMIN_EMAIL
+DEFAULT_ADMIN_PASSWORD
+```
+
+After deployment, open `/api/health` to confirm the backend is running, then open `/` for the React app.
 
 ## Author
 

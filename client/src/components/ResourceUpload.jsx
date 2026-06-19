@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { apiUrl } from '../api';
 
 const ResourceUpload = ({ token }) => {
   const [formData, setFormData] = useState({
@@ -56,7 +57,7 @@ const ResourceUpload = ({ token }) => {
     data.append('uploadedBy', formData.uploadedBy);
 
     try {
-      await axios.post('http://localhost:5006/api/resources', data, {
+      await axios.post(apiUrl('/api/resources'), data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('adminToken')}`

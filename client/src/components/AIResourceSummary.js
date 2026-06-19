@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { apiUrl } from '../api';
 
 const AIResourceSummary = () => {
   const [file, setFile] = useState(null);
@@ -24,7 +25,7 @@ const AIResourceSummary = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await axios.post('http://localhost:5006/api/ai/summarize', formData, {
+      const response = await axios.post(apiUrl('/api/ai/summarize'), formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

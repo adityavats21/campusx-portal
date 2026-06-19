@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();  // Initialize app
@@ -15,11 +16,15 @@ const studentRoutes = require('./routes/studentRoutes');
 const Admin = require('./models/Admin');
 const bcrypt = require('bcryptjs');
 
-const PORT = 5006;
+const PORT = process.env.PORT || 5006;
+const clientBuildPath = path.join(__dirname, '..', 'client', 'build');
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim())
+  : true;
 
 // Middleware
 app.use(cors({
-  origin: '*',
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -35,31 +40,54 @@ app.use('/api/events', eventRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Basic route
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    service: 'CampusX API',
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get('/api', (req, res) => {
   res.send('CampusX API Running');
 });
 
+app.use('/api', (req, res) => {
+  res.status(404).json({ message: 'API route not found' });
+});
+
+app.use(express.static(clientBuildPath));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
+
 // Connect to MongoDB and start server
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,         // These options are deprecated but harmless, you may remove them
-  useUnifiedTopology: true
-})
+const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+if (missingEnv.length > 0) {
+  console.error(`${missingEnv.join(', ')} missing. Add required environment variables.`);
+  process.exit(1);
+}
+
+mongoose.connect(process.env.MONGO_URI)
 .then(async () => {
   console.log('MongoDB connected');
 
-  // Create default admin if not exists
-  const existingAdmin = await Admin.findOne({ email: 'admin@campusx.com' });
-  if (!existingAdmin) {
-    const hashedPassword = await bcrypt.hash('admin123', 10);
-    const newAdmin = new Admin({
-      email: 'admin@campusx.com',
-      password: hashedPassword
-    });
-    await newAdmin.save();
-    console.log('✅ Default admin created: admin@campusx.com / admin123');
-  } else {
-    console.log('ℹ️ Default admin already exists');
+  if (process.env.DEFAULT_ADMIN_EMAIL && process.env.DEFAULT_ADMIN_PASSWORD) {
+    const existingAdmin = await Admin.findOne({ email: process.env.DEFAULT_ADMIN_EMAIL });
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash(process.env.DEFAULT_ADMIN_PASSWORD, 10);
+      const newAdmin = new Admin({
+        email: process.env.DEFAULT_ADMIN_EMAIL,
+        password: hashedPassword
+      });
+      await newAdmin.save();
+      console.log('Default admin created from environment variables');
+    } else {
+      console.log('Default admin already exists');
+    }
   }
 
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
