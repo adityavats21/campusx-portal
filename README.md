@@ -1,133 +1,105 @@
-# 🎓 CampusX: Student Resource & Event Portal
+# CampusX — Student Resource & Event Portal
 
-> A full-stack MERN application to manage campus events, study resources, and AI-powered PDF summaries — built with ❤️ by **Aditya Vats**.
-
-![CampusX Banner]https://github.com/adityavats21/campusx-portal.git 
-
----
-
-## Overview
-
-CampusX is a centralized portal for colleges to manage:
-- 🗓️ Upcoming events & RSVPs
-- 📚 Study material uploads (PDFs, slides)
-- 🤖 AI-powered PDF summarization
-- 🔐 Admin-only secure backend panel
-
-Built from scratch using **MongoDB, Express.js, React, Node.js, JWT Auth, Cloudinary, TailwindCSS**, and deployed on **Render**, **Vercel**, and **MongoDB Atlas**.
+A full-stack MERN application for college event management, study resource sharing, and AI-powered PDF summarization — with JWT-secured admin panel and cloud file storage.
 
 ---
 
 ## Features
 
-- 🔐 **Admin Login & JWT Authentication**
-- ☁️ **Secure PDF Uploads via Cloudinary**
-- 🧠 **AI Summarizer for PDFs (OpenAI API)**
-- 🗓️ **Full Event Management (CRUD)**
-- 🙋 **RSVP system for Students**
-- 📄 **View & Access Study Resources**
-- 🎨 **Fully polished, responsive UI**
-- 🌐 **Deployed on Render, Vercel, Atlas**
+- **JWT Authentication** — secure admin login with token-based route protection
+- **Event Management** — full CRUD for campus events with student RSVP system
+- **Study Resource Library** — PDF/slide uploads via Cloudinary with browsable dashboard
+- **AI PDF Summarizer** — OpenAI API integration to auto-summarize uploaded documents
+- **Responsive UI** — React + TailwindCSS with polished component design
 
 ---
 
 ## Tech Stack
 
-| Layer         | Technology                         |
-|---------------|-------------------------------------|
-| Frontend      | React.js + Tailwind CSS            |
-| Backend       | Express.js (Node.js)               |
-| Database      | MongoDB Atlas                      |
-| File Storage  | Cloudinary                         |
-| AI Service    | OpenAI API (PDF Summarization)     |
-| Auth          | JWT (JSON Web Tokens)              |
-| Deployment    | Render (backend), Vercel (frontend) |
+| Layer | Technology |
+|---|---|
+| Frontend | React.js, TailwindCSS |
+| Backend | Node.js, Express.js |
+| Database | MongoDB Atlas |
+| File Storage | Cloudinary |
+| AI Service | OpenAI API |
+| Auth | JWT (JSON Web Tokens) |
+| Deployment | Render (backend), Vercel (frontend), MongoDB Atlas |
 
 ---
 
-## Folder Structure
+## Architecture
 
-CampusX-Student-Portal/
-│
-├── client/ # React frontend
-│ └── src/components/ # UI components (AdminLogin, Dashboard, etc.)
-│
-├── server/ # Express backend
-│ ├── controllers/ # Route logic (admin, event, resource)
-│ ├── routes/ # API routes
-│ ├── models/ # Mongoose models
-│ ├── middleware/ # Auth middleware
-│ └── uploads/ # (If local storage used)
-│
-├── .env # Environment variables
-├── LICENSE # MIT License
-├── README.md # This file
-
-yaml
-Copy
-Edit
+```
+client/                         # React frontend
+├── src/components/             # AdminLogin, Dashboard, EventCard, ResourceViewer
+server/                         # Express backend
+├── controllers/                # admin, event, resource logic
+├── routes/                     # API route definitions
+├── models/                     # Mongoose schemas
+└── middleware/                 # JWT auth middleware
+```
 
 ---
 
-## Admin Authentication
+## Auth Flow
 
-- Admin logs in using a secure form.
-- Backend verifies credentials and returns a **JWT token**.
-- Token is stored in browser `localStorage`.
-- All sensitive backend routes (like uploading/deleting resources/events) are protected via JWT in request headers.
+1. Admin submits credentials via login form
+2. Backend verifies and returns a signed JWT
+3. Token stored in `localStorage` and attached to all subsequent request headers
+4. Protected routes (upload, delete, create) reject requests without valid token
 
 ---
 
-## How to Run Locally
+## Local Setup
 
-### Clone the repository
+### 1. Clone
+
 ```bash
 git clone https://github.com/adityavats21/campusx-portal.git
 cd campusx-portal
-🔧 Setup Backend
-bash
-Copy
-Edit
+```
+
+### 2. Backend
+
+```bash
 cd server
 npm install
-touch .env
-Create .env file with:
+```
 
-env
-Copy
-Edit
+Create a `.env` file:
+
+```env
 PORT=5006
-MONGO_URI=your_mongodb_connection
+MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_key
 CLOUDINARY_API_SECRET=your_secret
 OPENAI_API_KEY=your_openai_key
-Then run:
+```
 
-bash
-Copy
-Edit
+```bash
 npm start
-🖼️ Setup Frontend
-bash
-Copy
-Edit
+```
+
+### 3. Frontend
+
+```bash
 cd client
 npm install
 npm run dev
-🌐 Deployment
-Frontend → Vercel
+```
 
-Backend → Render
+---
 
-Database → MongoDB Atlas
+## License
 
-🧾 License
-This project is licensed under the MIT License — feel free to use, modify, and contribute.
+MIT
 
-🙋‍♂️ Author
-Made with dedication by Aditya Vats
-📧 vatsaditya21@gmail.com
-🔗 LinkedIn->
-🔗 GitHub->
+---
+
+## Author
+
+**Aditya Vats**
+[GitHub](https://github.com/adityavats21) · [LinkedIn](https://linkedin.com/in/adityavats21) · vatsaditya21@gmail.com
